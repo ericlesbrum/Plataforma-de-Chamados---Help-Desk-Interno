@@ -23,4 +23,9 @@ public class Usuario
     public string SenhaHash { get; set; }
     public PerfilUsuarioEnum PerfilUsuario { get; set; }
     public bool Ativo { get; set; }
+    public DateTime DataCriacao { get; set; }
+    public DateTime? DataUltimoAcesso { get; set; }
+
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
 }
