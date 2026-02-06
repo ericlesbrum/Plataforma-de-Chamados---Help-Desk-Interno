@@ -21,19 +21,23 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         var utcNow = DateTime.UtcNow;
 
-        var token = await _context.RefreshTokens
+        var tokens = await _context.RefreshTokens
         .Where(rt =>
             rt.UsuarioId == usuarioId &&
             !rt.IsRevoked &&
             rt.ExpiryDate > utcNow
         )
-        .OrderByDescending(rt => rt.CreatedAt)
-        .FirstOrDefaultAsync();
+        .OrderByDescending(rt => rt.ExpiryDate)
+        .ToListAsync();
 
-        if (token is null)
+        if (!tokens.Any())
             return null;
 
-        return PasswordHasher.Verify(refreshToken, token.Token) ? token: null;
+        var validToken = tokens.FirstOrDefault(rt =>
+            PasswordHasher.Verify(refreshToken, rt.Token)
+        );
+
+        return validToken;
     }
 
     public async Task AddAsync(RefreshToken refreshToken)
@@ -42,9 +46,83 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeAsync(RefreshToken refreshToken)
+    public async Task RevokeByTokenAsync(int usuarioId, string refreshToken)
     {
-        _context.RefreshTokens.Update(refreshToken);
+        var tokens = await _context.RefreshTokens
+        .Where(rt =>
+            rt.UsuarioId == usuarioId &&
+            !rt.IsRevoked &&
+            rt.ExpiryDate > DateTime.UtcNow
+        ).ToListAsync();
+
+        var token = tokens.FirstOrDefault(rt =>
+            PasswordHasher.Verify(refreshToken, rt.Token)
+        );
+
+        if(token is null)
+            return;
+
+        token.IsRevoked = true;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RevokeAllActiveTokensAsync(int usuarioId)
+    {
+        var tokens = await _context.RefreshTokens
+        .Where(rt =>
+            rt.UsuarioId == usuarioId &&
+            !rt.IsRevoked &&
+            rt.ExpiryDate > DateTime.UtcNow
+        ).ToListAsync();
+
+        if (!tokens.Any())
+            return;
+
+        foreach (var token in tokens)
+        {
+            token.IsRevoked = true;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<RefreshToken>> GetActiveSessionsAsync(int usuarioId)
+    {
+        return await _context.RefreshTokens
+            .Where(rt =>
+                rt.UsuarioId == usuarioId &&
+                !rt.IsRevoked &&
+                rt.ExpiryDate > DateTime.UtcNow)
+            .OrderByDescending(rt => rt.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task RevokeSessionAsync(int usuarioId, int sessionId)
+    {
+        var session = await _context.RefreshTokens
+            .FirstOrDefaultAsync(rt =>
+                rt.Id == sessionId &&
+                rt.UsuarioId == usuarioId);
+
+        if (session is null) return;
+
+        session.IsRevoked = true;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RevokeAllActiveTokensAsync(int usuarioId, int sessionId)
+    {
+        var tokens = await _context.RefreshTokens
+            .Where(rt =>
+                rt.UsuarioId == usuarioId &&
+                !rt.IsRevoked &&
+                rt.ExpiryDate > DateTime.UtcNow)
+            .ToListAsync();
+
+        foreach (var t in tokens)
+            t.IsRevoked = true;
+
         await _context.SaveChangesAsync();
     }
 }

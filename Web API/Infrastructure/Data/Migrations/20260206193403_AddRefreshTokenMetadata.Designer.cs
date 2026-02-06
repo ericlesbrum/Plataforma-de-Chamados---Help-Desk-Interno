@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web_API.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Web_API.Infrastructure.Data;
 namespace Web_API.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(HelpDeskContext))]
-    partial class HelpDeskContextModelSnapshot : ModelSnapshot
+    [Migration("20260206193403_AddRefreshTokenMetadata")]
+    partial class AddRefreshTokenMetadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,8 +44,7 @@ namespace Web_API.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("bit");
@@ -53,8 +55,8 @@ namespace Web_API.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserAgent")
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -67,38 +69,6 @@ namespace Web_API.Infrastructure.Data.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("Web_API.Domain.Entities.SecurityEvent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EventType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
-
-                    b.Property<string>("UserAgent")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("SecurityEvents", (string)null);
                 });
 
             modelBuilder.Entity("Web_API.Domain.Entities.Usuario", b =>
@@ -205,15 +175,6 @@ namespace Web_API.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("Web_API.Domain.Entities.SecurityEvent", b =>
-                {
-                    b.HasOne("Web_API.Domain.Entities.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Web_API.Domain.Entities.Usuario", b =>

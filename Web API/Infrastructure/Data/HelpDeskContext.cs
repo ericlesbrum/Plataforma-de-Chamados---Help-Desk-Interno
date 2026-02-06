@@ -11,6 +11,7 @@ public class HelpDeskContext : DbContext
     { }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<SecurityEvent> SecurityEvents { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -19,6 +20,7 @@ public class HelpDeskContext : DbContext
         {
             builder.ApplyConfiguration(new UsuarioConfiguration());
             builder.ApplyConfiguration(new RefreshTokenConfiguration());
+            builder.ApplyConfiguration(new SecurityEventConfiguration());
 
             //  HASH GERADO COM BCRYPT
             const string senhaHashPadrao =

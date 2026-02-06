@@ -1,4 +1,4 @@
-﻿namespace Web_API.Application.DTOs.Usuarios;
+﻿namespace Web_API.Application.DTOs.Token;
 
 public class TokenResponseDto
 {

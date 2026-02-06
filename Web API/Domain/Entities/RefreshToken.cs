@@ -19,6 +19,11 @@ public class RefreshToken
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public int UsuarioId { get; set; }
+    public string? IpAddress { get; set; }
+    [MaxLength(45)]
+    public string? UserAgent { get; set; }
+    [MaxLength(100)]
+    public string? DeviceId { get; set; }
 
     [ForeignKey(nameof(UsuarioId))]
     public Usuario Usuario { get; set; } = null!;

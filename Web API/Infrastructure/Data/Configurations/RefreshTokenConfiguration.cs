@@ -14,24 +14,26 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
                .IsRequired()
                .HasMaxLength(500);
 
-        builder.Property(rt => rt.CreatedAt)
-               .IsRequired();
-
         builder.Property(rt => rt.ExpiryDate)
-               .IsRequired();
+             .IsRequired();
 
         builder.Property(rt => rt.IsRevoked)
-               .IsRequired();
+            .IsRequired();
 
-        builder.HasOne(rt => rt.Usuario)
-               .WithMany(u => u.RefreshTokens)
-               .HasForeignKey(rt => rt.UsuarioId)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(rt => rt.CreatedAt)
+            .IsRequired();
+
+        builder.Property(rt => rt.IpAddress)
+            .HasMaxLength(45);
+
+        builder.Property(rt => rt.UserAgent)
+            .HasMaxLength(45);
+
+        builder.Property(rt => rt.DeviceId)
+            .HasMaxLength(100);
 
         builder.HasIndex(rt => rt.Token)
-              .IsUnique();
-
-        builder.HasIndex(rt => rt.UsuarioId);
+            .IsUnique();
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using Web_API.Application.DTOs.Usuarios;
+﻿using Web_API.Application.DTOs.Token;
+using Web_API.Application.DTOs.Usuarios;
 
 namespace Web_API.Domain.Interfaces
 {

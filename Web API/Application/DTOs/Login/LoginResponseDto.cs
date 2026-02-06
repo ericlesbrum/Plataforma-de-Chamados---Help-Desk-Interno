@@ -1,4 +1,6 @@
-﻿namespace Web_API.Application.DTOs.Usuarios;
+﻿using Web_API.Application.DTOs.Usuarios;
+
+namespace Web_API.Application.DTOs.Login;
 
 public class LoginResponseDto
 {

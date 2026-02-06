@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Web_API.Domain.Enums;
 
-namespace Web_API.Application.DTOs.Usuarios;
+namespace Web_API.Application.DTOs.Token;
 
 public class RegisterModelDto
 {
